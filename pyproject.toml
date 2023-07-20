@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "bookstore"
+version = "0.1.0"
+description = "Bookstore API"
+authors = ["leonardo"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+django = "^4.2.3"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.0"
+factory-boy = "^3.3.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
