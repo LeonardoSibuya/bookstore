@@ -6,15 +6,11 @@ authors = ["leonardo"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.8.1"
 django = "^4.2.3"
 django-rest-framework = "^0.1.0"
 django-extensions = "^3.2.3"
 django-debug-toolbar = "^4.1.0"
-
-[tool.poetry.group.dev.dependencies]
-pytest = "^7.4.0"
-factory-boy = "^3.3.0"
 
 [build-system]
 requires = ["poetry-core"]
