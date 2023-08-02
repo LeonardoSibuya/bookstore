@@ -52,6 +52,8 @@ COPY pyproject.toml ./
 # install runtime deps - uses $POETRY_VIRTUALENVS_IN_PROJECT internally
 RUN poetry install --no-dev
 
+RUN poetry add psycopg2
+
 # copy the rest of the app
 WORKDIR /app
 
