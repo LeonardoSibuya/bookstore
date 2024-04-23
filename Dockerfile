@@ -35,7 +35,9 @@ RUN apt-get update \
         # deps for installing poetry
         curl \
         # deps for building python deps
-        build-essential
+        build-essential \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 # install poetry - respects $POETRY_VERSION & $POETRY_HOME
 RUN curl -sSL https://install.python-poetry.org | python3 -
@@ -43,7 +45,7 @@ RUN curl -sSL https://install.python-poetry.org | python3 -
 # install postgres dependencies inside of Docker
 RUN apt-get update \
     && apt-get -y install libpq-dev gcc \
-    && pip install psycopg2
+    && pip3 install --no-cache-dir psycopg2
 
 # copy project requirement files here to ensure they will be cached.
 WORKDIR $PYSETUP_PATH
@@ -52,8 +54,7 @@ COPY pyproject.toml ./
 # install runtime deps - uses $POETRY_VIRTUALENVS_IN_PROJECT internally
 RUN poetry install --no-dev
 
-# Install psycopg2 without cache
-RUN pip install --no-cache-dir psycopg2
+RUN poetry add psycopg2
 
 # copy the rest of the app
 WORKDIR /app
