@@ -30,6 +30,11 @@ ENV PYTHONUNBUFFERED=1 \
 # prepend poetry and venv to path
 ENV PATH="$POETRY_HOME/bin:$VENV_PATH/bin:$PATH"
 
+
+RUN apt-get update && apt-get install -y python \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
 RUN apt-get update \
     && apt-get install --no-install-recommends -y \
         # deps for installing poetry
