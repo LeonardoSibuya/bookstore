@@ -26,10 +26,8 @@ ENV PYTHONUNBUFFERED=1 \
     PYSETUP_PATH="/opt/pysetup" \
     VENV_PATH="/opt/pysetup/.venv"
 
-
 # prepend poetry and venv to path
 ENV PATH="$POETRY_HOME/bin:$VENV_PATH/bin:$PATH"
-
 
 RUN apt-get update \
     && apt-get install --no-install-recommends -y \
@@ -38,31 +36,27 @@ RUN apt-get update \
         # deps for building python deps
         build-essential \
     && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
-# install poetry - respects $POETRY_VERSION & $POETRY_HOME
-RUN curl -sSL https://install.python-poetry.org | python3 -
-
-# install postgres dependencies inside of Docker
-RUN apt-get update \
+    && rm -rf /var/lib/apt/lists/* \
+    # Install poetry - respects $POETRY_VERSION & $POETRY_HOME
+    && curl -sSL https://install.python-poetry.org | python3 - \
+    # Install postgres dependencies inside of Docker
+    && apt-get update \
     && apt-get -y install libpq-dev gcc \
-    && pip3 install --no-cache-dir psycopg2
-
-# copy project requirement files here to ensure they will be cached.
-WORKDIR $PYSETUP_PATH
-COPY pyproject.toml ./
-
-# install runtime deps - uses $POETRY_VIRTUALENVS_IN_PROJECT internally
-RUN poetry install --no-dev
-
-# Adicione a flag --no-cache-dir ao instalar pacotes Python
-RUN poetry add --no-cache-dir psycopg2
-
-# copy the rest of the app
-WORKDIR /app
-
-COPY . /app/
-
-EXPOSE 8000
-
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+    && pip3 install --no-cache-dir psycopg2 \
+    # Copy project requirement files here to ensure they will be cached.
+    && mkdir -p $PYSETUP_PATH \
+    && cd $PYSETUP_PATH \
+    && poetry config virtualenvs.create false \
+    && poetry add --no-cache-dir psycopg2 \
+    && cd / \
+    && rm -rf $PYSETUP_PATH \
+    # Copy the rest of the app
+    && mkdir -p /app \
+    && cp -r . /app \
+    && cd /app \
+    && poetry install --no-dev \
+    && rm -rf /root/.cache \
+    # Expose port
+    && EXPOSE 8000 \
+    # Command to run the application
+    && CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
