@@ -31,10 +31,6 @@ ENV PYTHONUNBUFFERED=1 \
 ENV PATH="$POETRY_HOME/bin:$VENV_PATH/bin:$PATH"
 
 
-RUN apt-get update && apt-get install -y python \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
 RUN apt-get update \
     && apt-get install --no-install-recommends -y \
         # deps for installing poetry
@@ -59,7 +55,8 @@ COPY pyproject.toml ./
 # install runtime deps - uses $POETRY_VIRTUALENVS_IN_PROJECT internally
 RUN poetry install --no-dev
 
-RUN poetry add psycopg2
+# Adicione a flag --no-cache-dir ao instalar pacotes Python
+RUN poetry add --no-cache-dir psycopg2
 
 # copy the rest of the app
 WORKDIR /app
